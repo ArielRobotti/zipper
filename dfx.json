@@ -1,0 +1,25 @@
+{
+  "canisters": {
+    "zipper_backend": {
+      "main": "src/zipper_backend/main.mo",
+      "type": "motoko"
+    },
+    "zipper_frontend": {
+      "dependencies": [
+        "zipper_backend"
+      ],
+      "source": [
+        "src/zipper_frontend/assets"
+      ],
+      "type": "assets"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "output_env_file": ".env",
+  "version": 1
+}
