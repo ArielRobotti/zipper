@@ -1,10 +1,9 @@
 import Prim "mo:⛔";
-import Debug "mo:base/Debug";
-import Nat "mo:base/Nat";
+// import Debug "mo:base/Debug";
+// import Nat "mo:base/Nat";
 
 module {
-    let print = Debug.print;
-
+    // let print = Debug.print;
     public func calculateFrequencies(input : Text) : [(Nat8, Nat)] {
         let tempArrayMut : [var Nat] = Prim.Array_init<Nat>(256, 0);
         let nat8Array = Prim.blobToArray(Prim.encodeUtf8(input));
@@ -32,7 +31,6 @@ module {
 
     public func quickSort<T>(arr : [T], cmp : (T, T) -> { #less; #equal; #greater }) : [T] {
         let size = arr.size();
-        print("el size es ----> " # Nat.toText(size));
         var arrayMut = Prim.Array_init<T>(size, arr[0]);
         var index = 0;
         while (index < size) {
