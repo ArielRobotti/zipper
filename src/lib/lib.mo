@@ -52,7 +52,7 @@ module {
     };
 
     func _quickSort<T>(arr : [var T], cmp : (T, T) -> { #less; #equal; #greater }) : [var T] {
-
+        
         let size = arr.size();
         if (size <= 1) { return arr };
         var leftNumbers = Prim.Array_init<T>(size, arr[0]);
