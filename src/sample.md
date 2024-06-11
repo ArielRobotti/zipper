@@ -1,51 +1,256 @@
-dfx canister call back getCodes "$(<src/sample.md)"
+Skip to main content
+DFINITY Logo
 
-En ciencias de la computación y teoría de la información, la codificación Huffman es un algoritmo usado para compresión de datos. El término se refiere al uso de una tabla de códigos de longitud variable para codificar un determinado símbolo (como puede ser un carácter en un archivo), donde la tabla ha sido rellenada de una manera específica basándose en la probabilidad estimada de aparición de cada posible valor de dicho símbolo. Fue desarrollado por David A. Huffman mientras era estudiante de doctorado en el MIT, y publicado en "A Method for the Construction of Minimum-Redundancy Codes".
+ASK ICP.AI
 
-La codificación Huffman usa un método específico para elegir la representación de cada símbolo, que da lugar a un código prefijo (es decir, la cadena de bits que representa a un símbolo en particular nunca es prefijo de la cadena de bits de un símbolo distinto) que representa los caracteres más comunes usando las cadenas de bits más cortas, y viceversa. Huffman fue capaz de diseñar el método de compresión más eficiente de este tipo: ninguna representación alternativa de un conjunto de símbolos de entrada produce una salida media más pequeña cuando las frecuencias de los símbolos coinciden con las usadas para crear el código. Posteriormente se encontró un método para llevar esto a cabo en un tiempo lineal si las probabilidades de los símbolos de entrada (también conocidas como "pesos") están ordenadas.
+Search
+CTRL+K
+HomeBuildLanguages
+Frameworks
+Additional Resources
+Motoko interactive tutorial
+Motoko language book
+Getting started
+Introduction
+Basic concepts and terms
+Developer environment
+Motoko quickstart
+Sample projects and resources
+Writing Motoko
+Canister maintenance
+Cycles
+Optimizing canisters
+Stable variables and upgrade methods
+Verifying upgrade compatibility
+Stable memory
+Motoko tools
+Migration guides
+References
+Motoko base library
 
-Para un grupo de símbolos con una distribución de probabilidad uniforme y un número de miembros que es potencia de dos, la codificación Huffman es equivalente a una codificación en bloque binaria, por ejemplo, la codificación ASCII. La codificación Huffman es un método para crear códigos prefijo tan extendido que el término "codificación Huffman" es ampliamente usado como sinónimo de "código prefijo", incluso cuando dicho código no se ha producido con el algoritmo de Huffman.
+motoko-packages
+Basic concepts and terms
+Overview
+Motoko is designed for distributed programming with actors. When programming on ICP in Motoko, each actor represents an ICP canister smart contract with a Candid interface. Within Motoko, the term actor is used to refer to any canister authored in any language that deploys to ICP. The role of Motoko is to make these actors easy to author and use programmatically once deployed.
 
-Aunque la codificación de Huffman es óptima para una codificación símbolo a símbolo dada una distribución de probabilidad, su optimalidad a veces puede verse accidentalmente exagerada. Por ejemplo, la codificación aritmética y la codificación LZW normalmente ofrecen mayor capacidad de compresión. Estos dos métodos pueden agrupar un número arbitrario de símbolos para una codificación más eficiente, y en general se adaptan a las estadísticas de entrada reales. Este último es útil cuando las probabilidades no se conocen de forma precisa o varían significativamente dentro del flujo de datos.En ciencias de la computación y teoría de la información, la codificación Huffman es un algoritmo usado para compresión de datos. El término se refiere al uso de una tabla de códigos de longitud variable para codificar un determinado símbolo (como puede ser un carácter en un archivo), donde la tabla ha sido rellenada de una manera específica basándose en la probabilidad estimada de aparición de cada posible valor de dicho símbolo. Fue desarrollado por David A. Huffman mientras era estudiante de doctorado en el MIT, y publicado en "A Method for the Construction of Minimum-Redundancy Codes".
+Before you begin writing canisters in Motoko, you should be familiar with a few of the basic concepts and terms specific to Motoko.
 
-La codificación Huffman usa un método específico para elegir la representación de cada símbolo, que da lugar a un código prefijo (es decir, la cadena de bits que representa a un símbolo en particular nunca es prefijo de la cadena de bits de un símbolo distinto) que representa los caracteres más comunes usando las cadenas de bits más cortas, y viceversa. Huffman fue capaz de diseñar el método de compresión más eficiente de este tipo: ninguna representación alternativa de un conjunto de símbolos de entrada produce una salida media más pequeña cuando las frecuencias de los símbolos coinciden con las usadas para crear el código. Posteriormente se encontró un método para llevar esto a cabo en un tiempo lineal si las probabilidades de los símbolos de entrada (también conocidas como "pesos") están ordenadas.
+Values
+Primitive values
+Motoko supports the following primitive types and values:
 
-Para un grupo de símbolos con una distribución de probabilidad uniforme y un número de miembros que es potencia de dos, la codificación Huffman es equivalente a una codificación en bloque binaria, por ejemplo, la codificación ASCII. La codificación Huffman es un método para crear códigos prefijo tan extendido que el término "codificación Huffman" es ampliamente usado como sinónimo de "código prefijo", incluso cuando dicho código no se ha producido con el algoritmo de Huffman.
+Bool: Boolean values (true and false).
 
-Aunque la codificación de Huffman es óptima para una codificación símbolo a símbolo dada una distribución de probabilidad, su optimalidad a veces puede verse accidentalmente exagerada. Por ejemplo, la codificación aritmética y la codificación LZW normalmente ofrecen mayor capacidad de compresión. Estos dos métodos pueden agrupar un número arbitrario de símbolos para una codificación más eficiente, y en general se adaptan a las estadísticas de entrada reales. Este último es útil cuando las probabilidades no se conocen de forma precisa o varían significativamente dentro del flujo de datos.En ciencias de la computación y teoría de la información, la codificación Huffman es un algoritmo usado para compresión de datos. El término se refiere al uso de una tabla de códigos de longitud variable para codificar un determinado símbolo (como puede ser un carácter en un archivo), donde la tabla ha sido rellenada de una manera específica basándose en la probabilidad estimada de aparición de cada posible valor de dicho símbolo. Fue desarrollado por David A. Huffman mientras era estudiante de doctorado en el MIT, y publicado en "A Method for the Construction of Minimum-Redundancy Codes".
+Int: Integers (…​,-2, -1, 0, 1, 2, …​) - bounded and unbounded variants.
 
-La codificación Huffman usa un método específico para elegir la representación de cada símbolo, que da lugar a un código prefijo (es decir, la cadena de bits que representa a un símbolo en particular nunca es prefijo de la cadena de bits de un símbolo distinto) que representa los caracteres más comunes usando las cadenas de bits más cortas, y viceversa. Huffman fue capaz de diseñar el método de compresión más eficiente de este tipo: ninguna representación alternativa de un conjunto de símbolos de entrada produce una salida media más pequeña cuando las frecuencias de los símbolos coinciden con las usadas para crear el código. Posteriormente se encontró un método para llevar esto a cabo en un tiempo lineal si las probabilidades de los símbolos de entrada (también conocidas como "pesos") están ordenadas.
+Nat: Natural numbers (0, 1, 2, …​) - bounded and unbounded variants.
 
-Para un grupo de símbolos con una distribución de probabilidad uniforme y un número de miembros que es potencia de dos, la codificación Huffman es equivalente a una codificación en bloque binaria, por ejemplo, la codificación ASCII. La codificación Huffman es un método para crear códigos prefijo tan extendido que el término "codificación Huffman" es ampliamente usado como sinónimo de "código prefijo", incluso cuando dicho código no se ha producido con el algoritmo de Huffman.
+Char: Unicode text characters ('a', 'B', '☃').
 
-Aunque la codificación de Huffman es óptima para una codificación símbolo a símbolo dada una distribución de probabilidad, su optimalidad a veces puede verse accidentalmente exagerada. Por ejemplo, la codificación aritmética y la codificación LZW normalmente ofrecen mayor capacidad de compresión. Estos dos métodos pueden agrupar un número arbitrario de símbolos para una codificación más eficiente, y en general se adaptan a las estadísticas de entrada reales. Este último es útil cuando las probabilidades no se conocen de forma precisa o varían significativamente dentro del flujo de datos.En ciencias de la computación y teoría de la información, la codificación Huffman es un algoritmo usado para compresión de datos. El término se refiere al uso de una tabla de códigos de longitud variable para codificar un determinado símbolo (como puede ser un carácter en un archivo), donde la tabla ha sido rellenada de una manera específica basándose en la probabilidad estimada de aparición de cada posible valor de dicho símbolo. Fue desarrollado por David A. Huffman mientras era estudiante de doctorado en el MIT, y publicado en "A Method for the Construction of Minimum-Redundancy Codes".
+Text: Text values of strings of unicode characters.
 
-La codificación Huffman usa un método específico para elegir la representación de cada símbolo, que da lugar a un código prefijo (es decir, la cadena de bits que representa a un símbolo en particular nunca es prefijo de la cadena de bits de un símbolo distinto) que representa los caracteres más comunes usando las cadenas de bits más cortas, y viceversa. Huffman fue capaz de diseñar el método de compresión más eficiente de este tipo: ninguna representación alternativa de un conjunto de símbolos de entrada produce una salida media más pequeña cuando las frecuencias de los símbolos coinciden con las usadas para crear el código. Posteriormente se encontró un método para llevar esto a cabo en un tiempo lineal si las probabilidades de los símbolos de entrada (también conocidas como "pesos") están ordenadas.
+By default, integers and natural numbers are unbounded and do not overflow. Instead, they use representations that grow to accommodate any finite number.
 
-Para un grupo de símbolos con una distribución de probabilidad uniforme y un número de miembros que es potencia de dos, la codificación Huffman es equivalente a una codificación en bloque binaria, por ejemplo, la codificación ASCII. La codificación Huffman es un método para crear códigos prefijo tan extendido que el término "codificación Huffman" es ampliamente usado como sinónimo de "código prefijo", incluso cuando dicho código no se ha producido con el algoritmo de Huffman.
+For practical reasons, Motoko also includes bounded types for integers and natural numbers, distinct from the default versions. Each bounded variant has a fixed bit-width (one of 8, 16, 32, 64) that determines the range of representable values, and each carries the potential for overflow. Exceeding a bound is a run-time fault that causes the program to trap.
 
-Aunque la codificación de Huffman es óptima para una codificación símbolo a símbolo dada una distribución de probabilidad, su optimalidad a veces puede verse accidentalmente exagerada. Por ejemplo, la codificación aritmética y la codificación LZW normalmente ofrecen mayor capacidad de compresión. Estos dos métodos pueden agrupar un número arbitrario de símbolos para una codificación más eficiente, y en general se adaptan a las estadísticas de entrada reales. Este último es útil cuando las probabilidades no se conocen de forma precisa o varían significativamente dentro del flujo de datos.En ciencias de la computación y teoría de la información, la codificación Huffman es un algoritmo usado para compresión de datos. El término se refiere al uso de una tabla de códigos de longitud variable para codificar un determinado símbolo (como puede ser un carácter en un archivo), donde la tabla ha sido rellenada de una manera específica basándose en la probabilidad estimada de aparición de cada posible valor de dicho símbolo. Fue desarrollado por David A. Huffman mientras era estudiante de doctorado en el MIT, y publicado en "A Method for the Construction of Minimum-Redundancy Codes".
+There are no unchecked, uncaught overflows in Motoko, except in well-defined situations, for explicitly wrapping operations, indicated by a conventional % character in the operator. The language provides primitive built-ins to convert between these various number representations.
 
-La codificación Huffman usa un método específico para elegir la representación de cada símbolo, que da lugar a un código prefijo (es decir, la cadena de bits que representa a un símbolo en particular nunca es prefijo de la cadena de bits de un símbolo distinto) que representa los caracteres más comunes usando las cadenas de bits más cortas, y viceversa. Huffman fue capaz de diseñar el método de compresión más eficiente de este tipo: ninguna representación alternativa de un conjunto de símbolos de entrada produce una salida media más pequeña cuando las frecuencias de los símbolos coinciden con las usadas para crear el código. Posteriormente se encontró un método para llevar esto a cabo en un tiempo lineal si las probabilidades de los símbolos de entrada (también conocidas como "pesos") están ordenadas.
+Non-primitive values
+Motoko permits user-defined types and each of the following non-primitive value forms and associated types:
 
-Para un grupo de símbolos con una distribución de probabilidad uniforme y un número de miembros que es potencia de dos, la codificación Huffman es equivalente a una codificación en bloque binaria, por ejemplo, la codificación ASCII. La codificación Huffman es un método para crear códigos prefijo tan extendido que el término "codificación Huffman" es ampliamente usado como sinónimo de "código prefijo", incluso cuando dicho código no se ha producido con el algoritmo de Huffman.
+Tuples, including the unit value (the "empty tuple").
 
-Aunque la codificación de Huffman es óptima para una codificación símbolo a símbolo dada una distribución de probabilidad, su optimalidad a veces puede verse accidentalmente exagerada. Por ejemplo, la codificación aritmética y la codificación LZW normalmente ofrecen mayor capacidad de compresión. Estos dos métodos pueden agrupar un número arbitrario de símbolos para una codificación más eficiente, y en general se adaptan a las estadísticas de entrada reales. Este último es útil cuando las probabilidades no se conocen de forma precisa o varían significativamente dentro del flujo de datos.En ciencias de la computación y teoría de la información, la codificación Huffman es un algoritmo usado para compresión de datos. El término se refiere al uso de una tabla de códigos de longitud variable para codificar un determinado símbolo (como puede ser un carácter en un archivo), donde la tabla ha sido rellenada de una manera específica basándose en la probabilidad estimada de aparición de cada posible valor de dicho símbolo. Fue desarrollado por David A. Huffman mientras era estudiante de doctorado en el MIT, y publicado en "A Method for the Construction of Minimum-Redundancy Codes".
+Arrays with both immutable and mutable variants.
 
-La codificación Huffman usa un método específico para elegir la representación de cada símbolo, que da lugar a un código prefijo (es decir, la cadena de bits que representa a un símbolo en particular nunca es prefijo de la cadena de bits de un símbolo distinto) que representa los caracteres más comunes usando las cadenas de bits más cortas, y viceversa. Huffman fue capaz de diseñar el método de compresión más eficiente de este tipo: ninguna representación alternativa de un conjunto de símbolos de entrada produce una salida media más pequeña cuando las frecuencias de los símbolos coinciden con las usadas para crear el código. Posteriormente se encontró un método para llevar esto a cabo en un tiempo lineal si las probabilidades de los símbolos de entrada (también conocidas como "pesos") están ordenadas.
+Objects with named, unordered fields and methods.
 
-Para un grupo de símbolos con una distribución de probabilidad uniforme y un número de miembros que es potencia de dos, la codificación Huffman es equivalente a una codificación en bloque binaria, por ejemplo, la codificación ASCII. La codificación Huffman es un método para crear códigos prefijo tan extendido que el término "codificación Huffman" es ampliamente usado como sinónimo de "código prefijo", incluso cuando dicho código no se ha producido con el algoritmo de Huffman.
+Variants with named constructors and optional payload values.
 
-Aunque la codificación de Huffman es óptima para una codificación símbolo a símbolo dada una distribución de probabilidad, su optimalidad a veces puede verse accidentalmente exagerada. Por ejemplo, la codificación aritmética y la codificación LZW normalmente ofrecen mayor capacidad de compresión. Estos dos métodos pueden agrupar un número arbitrario de símbolos para una codificación más eficiente, y en general se adaptan a las estadísticas de entrada reales. Este último es útil cuando las probabilidades no se conocen de forma precisa o varían significativamente dentro del flujo de datos.En ciencias de la computación y teoría de la información, la codificación Huffman es un algoritmo usado para compresión de datos. El término se refiere al uso de una tabla de códigos de longitud variable para codificar un determinado símbolo (como puede ser un carácter en un archivo), donde la tabla ha sido rellenada de una manera específica basándose en la probabilidad estimada de aparición de cada posible valor de dicho símbolo. Fue desarrollado por David A. Huffman mientras era estudiante de doctorado en el MIT, y publicado en "A Method for the Construction of Minimum-Redundancy Codes".
+Function values including shareable functions.
 
-La codificación Huffman usa un método específico para elegir la representación de cada símbolo, que da lugar a un código prefijo (es decir, la cadena de bits que representa a un símbolo en particular nunca es prefijo de la cadena de bits de un símbolo distinto) que representa los caracteres más comunes usando las cadenas de bits más cortas, y viceversa. Huffman fue capaz de diseñar el método de compresión más eficiente de este tipo: ninguna representación alternativa de un conjunto de símbolos de entrada produce una salida media más pequeña cuando las frecuencias de los símbolos coinciden con las usadas para crear el código. Posteriormente se encontró un método para llevar esto a cabo en un tiempo lineal si las probabilidades de los símbolos de entrada (también conocidas como "pesos") están ordenadas.
+Async values, also known as promises or futures;
 
-Para un grupo de símbolos con una distribución de probabilidad uniforme y un número de miembros que es potencia de dos, la codificación Huffman es equivalente a una codificación en bloque binaria, por ejemplo, la codificación ASCII. La codificación Huffman es un método para crear códigos prefijo tan extendido que el término "codificación Huffman" es ampliamente usado como sinónimo de "código prefijo", incluso cuando dicho código no se ha producido con el algoritmo de Huffman.
+Error values carry the payload of exceptions and system failures.
 
-Aunque la codificación de Huffman es óptima para una codificación símbolo a símbolo dada una distribución de probabilidad, su optimalidad a veces puede verse accidentalmente exagerada. Por ejemplo, la codificación aritmética y la codificación LZW normalmente ofrecen mayor capacidad de compresión. Estos dos métodos pueden agrupar un número arbitrario de símbolos para una codificación más eficiente, y en general se adaptan a las estadísticas de entrada reales. Este último es útil cuando las probabilidades no se conocen de forma precisa o varían significativamente dentro del flujo de datos.En ciencias de la computación y teoría de la información, la codificación Huffman es un algoritmo usado para compresión de datos. El término se refiere al uso de una tabla de códigos de longitud variable para codificar un determinado símbolo (como puede ser un carácter en un archivo), donde la tabla ha sido rellenada de una manera específica basándose en la probabilidad estimada de aparición de cada posible valor de dicho símbolo. Fue desarrollado por David A. Huffman mientras era estudiante de doctorado en el MIT, y publicado en "A Method for the Construction of Minimum-Redundancy Codes".
+For precise language definitions of primitive and non-primitive values, see the language reference.
 
-La codificación Huffman usa un método específico para elegir la representación de cada símbolo, que da lugar a un código prefijo (es decir, la cadena de bits que representa a un símbolo en particular nunca es prefijo de la cadena de bits de un símbolo distinto) que representa los caracteres más comunes usando las cadenas de bits más cortas, y viceversa. Huffman fue capaz de diseñar el método de compresión más eficiente de este tipo: ninguna representación alternativa de un conjunto de símbolos de entrada produce una salida media más pequeña cuando las frecuencias de los símbolos coinciden con las usadas para crear el código. Posteriormente se encontró un método para llevar esto a cabo en un tiempo lineal si las probabilidades de los símbolos de entrada (también conocidas como "pesos") están ordenadas.
+Printing values
+The function print, from base library Debug, accepts a text string of type Text as input, and produces the unit value of unit type or (), as its output.
 
-Para un grupo de símbolos con una distribución de probabilidad uniforme y un número de miembros que es potencia de dos, la codificación Huffman es equivalente a una codificación en bloque binaria, por ejemplo, la codificación ASCII. La codificación Huffman es un método para crear códigos prefijo tan extendido que el término "codificación Huffman" es ampliamente usado como sinónimo de "código prefijo", incluso cuando dicho código no se ha producido con el algoritmo de Huffman.
+Because unit values carry no information, all values of type unit are identical, so the print function doesn’t actually produce an interesting result. Instead of a result, the function print has the effect of emitting the text string in a human-readable form to the output terminal. Functions that have side effects, such as emitting output or modifying state, are often called impure. Functions that just return values without further side-effects, are called pure.
 
-Aunque la codificación de Huffman es óptima para una codificación símbolo a símbolo dada una distribución de probabilidad, su optimalidad a veces puede verse accidentalmente exagerada. Por ejemplo, la codificación aritmética y la codificación LZW normalmente ofrecen mayor capacidad de compresión. Estos dos métodos pueden agrupar un número arbitrario de símbolos para una codificación más eficiente, y en general se adaptan a las estadísticas de entrada reales. Este último es útil cuando las probabilidades no se conocen de forma precisa o varían significativamente dentro del flujo de datos.
+You can transform most Motoko values into human-readable text strings for debugging purposes, without having to write those transformations by hand. The debug_show primitive permits converting a large class of values into values of type Text.
+
+Motoko program syntax
+Each Motoko program is comprised of declarations and expressions whose syntactic classes are distinct but related.
+
+Declarations introduce immutable variables, mutable state, actors, objects, classes and other types. Declarations can be mutually recursive, but in cases where they are not, they permit substitution semantics such as replacing values with an equal value.
+
+Expressions describe computations that involve these notions.
+
+To deploy a valid program to ICP, the program must consist of an actor expression introduced with the keyword actor.
+
+As a starting point, the following code snippet consists of two declarations for the variables x and y followed by an expression to form a single program:
+
+
+let x = 1;
+let y = x + 1;
+x * y + x;
+
+This program’s type is Nat (natural number), and when run, it evaluates to the Nat value of 3.
+
+This program is a declaration list that consists of three declarations:
+
+Immutable variable x, via declaration let x = 1;.
+
+Immutable variable y, via declaration let y = x + 1;.
+
+An unnamed, implicit variable holding the final expression’s value, x * y + x.
+
+The expression x * y + x illustrates that each expression can be thought of as a declaration where necessary, since the language implicitly declares an unnamed variable with that expression’s result value.
+
+When the expression appears as the final declaration, this expression may have any type. Here, the expression x * y + x has type Nat.
+
+Expressions that do not appear at the end, but rather within the list of declarations must have unit type ().
+
+Unit-type restrictions can be ignored by explicitly using the ignore keyword to disregard any unused result values.
+
+Lexical scoping
+A declaration list is not itself an expression, so you cannot declare another variable with its final value.
+
+Block expressions can be formed from a list of declarations by enclosing it with matching curly braces. Blocks are only allowed as sub-expressions of control flow expressions like if, loop, case, etc. A block expression produces a value and, when enclosed in parentheses, can occur within some larger, compound expression.
+
+In all other places, do { … } is used to represent block expressions and distinguish blocks from object literals. For example, do {} is the empty block of type (), while {} is an empty record of record type {}. This block form preserves the autonomy of the declaration list and its choice of variable names. This means that variables' scopes may nest, but they may not interfere as they nest. Language theorists call this idea lexical scoping.
+
+Aside from mathematical clarity, the chief practical benefit of lexical scoping is security and its use in building compositionally-secure systems. Specifically, Motoko gives very strong composition properties. For example, nesting your program within a program you do not trust cannot arbitrarily redefine your variables with different meanings.
+
+Type soundness
+Each Motoko expression that type checks is considered well-typed. The type of a Motoko expression serves as a promise from the language to the developer about the future behavior of the program, if executed.
+
+First, each well-typed program will evaluate without undefined behavior. There is a precise space of meaningful programs. The type system enforces that programs stay within it and that all well-typed programs have a precise meaning.
+
+Furthermore, the types make a precise prediction over the program’s result. If it yields control, the program will generate a result value that agrees with that of the original program.
+
+In either case, the static and dynamic views of the program are linked by and agree with the static type system. This agreement is the central principle of a static type system, and is delivered by Motoko as a core aspect of its design.
+
+The same type system also enforces that asynchronous interactions agree between static and dynamic views of the program, and that the resulting messages generated never mismatch at runtime. This agreement is similar in spirit to the caller/callee argument type and return type agreements that one ordinarily expects in a typed language.
+
+Type annotations and variables
+Variables relate static names and static types with dynamic values that are present only at runtime.
+
+In this sense, Motoko types provide a form of trusted, compiler-verified documentation in the program source code.
+
+Consider this very short program:
+
+
+let x : Nat = 1
+
+In this example, the compiler infers that the expression 1 has type Nat, and that x has the same type.
+
+In this case, we can omit this annotation without changing the meaning of the program:
+
+
+let x = 1
+
+Except for some esoteric situations involving operator overloading, type annotations do not typically affect the meaning of the program as it runs. If they are omitted and the compiler accepts the program, as is the case above, the program has the same meaning and behavior as it did originally.
+
+However, sometimes type annotations are required by the compiler to infer other assumptions and to check the program as a whole. When they are added and the compiler still accepts the program, you can confirm that the added annotations are consistent with the existing ones.
+
+Type errors and messages
+Motoko is a statically typed programming language. That means that the compiler will reject any program that contains obviously non-sensical code.
+
+For example, while adding two numbers is allowed, adding a number to a text value makes no sense to the Motoko compiler and is flagged as an error that must be fixed before the code can be run or deployed.
+
+The rules that Motoko applies to verify the correctness of code before compiling and running it are called its type system. Motoko's type system will detect and reject static errors such as applying a function to the wrong number of arguments, or to arguments of the wrong type.
+
+The type system is a safety feature that prevents a slew of errors that would otherwise have to be detected and reported at runtime, when they would be difficult or impossible to address.
+
+Motoko base library
+For various practical language engineering reasons, the design of Motoko strives to minimize built-in types and operations.
+
+Instead, whenever possible, the Motoko base library provides the types and operations that make the language feel complete. However, this base library is still under development, and is still incomplete.
+
+The Motoko base library lists a selection of modules, focusing on core features used in the examples that are unlikely to change radically. The base library APIs will likely evolve over time and in particular, grow in size and number as Motoko matures.
+
+To import from the base library, use the import keyword. Give a local module name to introduce, in this example D for “Debug”, and a URL where the import declaration may locate the imported module:
+
+
+import D "mo:base/Debug";
+D.print("hello world");
+
+In this case, we import Motoko code with the mo: prefix, specify the base/ path, followed by the module’s file name Debug.mo minus its extension.
+
+Traps
+Some errors, such as division by zero, out-of-bounds array indexing, and pattern match failure are by design not prevented by the type system, but instead cause dynamic faults called traps.
+
+Because the meaning of execution is ill-defined after a faulting trap, execution of the code ends by aborting at the trap.
+
+Traps that occur within actor messages are more subtle: they don’t abort the entire actor, but prevent that particular message from proceeding, rolling back any yet uncommitted state changes. Other messages on the actor will continue execution.
+
+Occasionally it can be useful to force an unconditional trap, with a user-defined message.
+
+The Debug library provides the function trap(t) for this purpose, which can be used in any context:
+
+
+import Debug "mo:base/Debug";
+
+Debug.trap("oops!");
+
+Assertions allow you to conditionally trap when some Boolean test fails to hold, but continue execution otherwise:
+
+
+let n = 65535;
+assert n % 2 == 0; // traps when n not even
+
+Because an assertion may succeed, and thus proceed with execution, it may only be used in context where a value of type () is expected.
+
+Edit this page
+Last updated on May 1, 2024 by Jessie Mongeon
+Previous
+Introduction
+Next
+Developer environment
+Overview
+Values
+Primitive values
+Non-primitive values
+Printing values
+Motoko program syntax
+Lexical scoping
+Type soundness
+Type annotations and variables
+Type errors and messages
+Motoko base library
+Traps
+Internet Computer Association
+
+Wiki
+
+Node Providers
+
+Dashboard
+
+ICP Careers
+
+Developer Grants
+
+Support & Feedback
+
+Brand Materials
+
+Press Kit
+
+Sign up for email updates to keep up to date with advancements on the Internet Computer
+
+Email
+GET UPDATES!
+Privacy Policy
+Terms of Use
+© 2024 Internet Computer
+X
+Telegram
+Medium
+Youtube
+Reddit
+CoinMarketCap
+DSCVR

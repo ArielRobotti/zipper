@@ -1,15 +1,19 @@
 import Prim "mo:⛔";
 import Map "mo:map/Map";
 import Nat "mo:base/Nat";
-import { n8hash; thash } "mo:map/Map";
-import Set "mo:map/Set";
+import { n8hash } "mo:map/Map";
 import Debug "mo:base/Debug";
+import Types "types";
+import { cmpNodes } "types";
 // import Nat "mo:base/Nat";
 
 module {
-    let print = Debug.print;
-    //Temporal complexity O(n)
-    public func calculateFrequencies(input : Text) : [var (Nat8, Nat)] {
+    // let print = Debug.print;
+    type Node<T> = Types.Node<T>;
+    type Order = Types.Order;
+
+    //Runtime: O(n)
+    func calculateFrequencies(input : Text) : [var Node<Nat8>] {
         let tempArrayMut : [var Nat] = Prim.Array_init<Nat>(256, 0);
         let nat8Array = Prim.blobToArray(Prim.encodeUtf8(input));
         var cont = 0;
@@ -20,32 +24,22 @@ module {
                 cont += 1;
             };
         };
+        let result = Prim.Array_init<Node<Nat8>>(cont, { elements = [0]; prob = 0 });
         var index = 0;
-        let result = Prim.Array_init<(Nat8, Nat)>(cont, (0, 0));
         while (index < 256) {
             if (tempArrayMut[index] != 0) {
-                result[cont -1] := (Prim.natToNat8(index), tempArrayMut[index]);
+                result[cont -1] := {
+                    elements = [Prim.natToNat8(index)];
+                    prob = tempArrayMut[index];
+                };
                 cont -= 1;
             };
             index += 1;
         };
         result;
     };
-
-    public func quickSort<T>(arr : [T], cmp : (T, T) -> { #less; #equal; #greater }) : [T] {
-        let size = arr.size();
-        if (size <= 1) { return arr };
-        var arrayMut = Prim.Array_init<T>(size, arr[0]);
-        var index = 0;
-        while (index < size) {
-            arrayMut[index] := arr[index];
-            index += 1;
-        };
-        arrayMut := _quickSort<T>(arrayMut, cmp);
-        Prim.Array_tabulate<T>(size, func x = arrayMut[x]);
-    };
-
-    func headArray<T>(arr : [var T], end : Nat) : [var T] {
+    
+    func sliceArray<T>(arr : [var T], end : Nat) : [var T] {
         let result = Prim.Array_init<T>(end, arr[0]);
         var index = 0;
         while (index < end) {
@@ -55,20 +49,19 @@ module {
         result;
     };
 
-    // temporal complexity O(n * Log(n))
-    func _quickSort<T>(arr : [var T], cmp : (T, T) -> { #less; #equal; #greater }) : [var T] {
-
+    //Runtime: O(size * log(size))
+    func quickSort<T>(arr : [var T], cmp : (T, T) -> Order) : [var T] {
         let size = arr.size();
         if (size <= 1) { return arr };
         var leftNumbers = Prim.Array_init<T>(size, arr[0]);
         var rigthNumbers = Prim.Array_init<T>(size, arr[0]);
         var countLeft = 0;
         var countRigth = 0;
-        let pivote = arr[size / 2];
+        let pivot = arr[size / 2];
         var index = 0;
         while (index < size) {
             if (index != size / 2) {
-                if (cmp(arr[index], pivote) == #less) {
+                if (cmp(arr[index], pivot) == #less) {
                     leftNumbers[countLeft] := arr[index];
                     countLeft += 1;
                 } else {
@@ -78,29 +71,24 @@ module {
             };
             index += 1;
         };
-        leftNumbers := headArray(leftNumbers, countLeft);
-        rigthNumbers := headArray(rigthNumbers, countRigth);
+        leftNumbers := sliceArray(leftNumbers, countLeft);
+        rigthNumbers := sliceArray(rigthNumbers, countRigth);
         let result = Prim.Array_init<T>(size, arr[0]);
         index := 0;
-        for (l in _quickSort(leftNumbers, cmp).vals()) {
+        for (l in quickSort(leftNumbers, cmp).vals()) {
             result[index] := l;
             index += 1;
         };
-        result[index] := pivote;
+        result[index] := pivot;
         index += 1;
-        for (r in _quickSort(rigthNumbers, cmp).vals()) {
+        for (r in quickSort(rigthNumbers, cmp).vals()) {
             result[index] := r;
             index += 1;
         };
         result;
     };
 
-    type Node<T> = {
-        elements : [T];
-        prob : Nat;
-    };
-
-    func headTail<T>(arr : [var T]) : (T, [var T]) {
+    func splitHeadTail<T>(arr : [var T]) : (T, [var T]) {
         let size = arr.size();
         if (size < 2) { return (arr[0], [var]) };
         let head = arr[0];
@@ -113,81 +101,69 @@ module {
         (head, tail);
     };
 
-    func buildHuffmanTree<T>(arr : [var (T, Nat)], hashEq : (T -> Nat32, (T, T) -> Bool)) : Map.Map<T, Text> {
-        //En el return, el Nat representa la codificacion binaria del simbolo expresada en sistema decimal
-        var size = arr.size();
-
-        let stringCode = Map.new<T, Text>();
-        var nodes = Prim.Array_init<Node<T>>(size, { elements = [arr[0].0]; prob = arr[0].1 });
-        var index = 0;
-        while (index < size) {
-            nodes[index] := { elements = [arr[index].0]; prob = arr[index].1 };
-            index += 1;
+    func mergeNodes<T>(a : Node<T>, b : Node<T>) : Node<T> {
+        let newSize = a.elements.size() + b.elements.size();
+        func fillArray(i : Nat) : T {
+            if (i < a.elements.size()) { a.elements[i] } else {
+                b.elements[i - a.elements.size()];
+            };
         };
+        let elements = Prim.Array_tabulate<T>(newSize, fillArray);
+        let prob = a.prob + b.prob;
+        { elements; prob };
+    };
 
+    type Code = Text;
+
+    func buildHuffmanTree<T>(arr : [var Node<T>], hashEq : (T -> Nat32, (T, T) -> Bool)) : Map.Map<T, Code> {
+        let codes = Map.new<T, Code>();
+        var nodes = arr;
         while (nodes.size() > 1) {
-
-            let (head, tail) = headTail<Node<T>>(nodes);
-            let setElements = Set.new<T>();   
-            let sumProb : Nat = head.prob + tail[0].prob;
+            let (head, tail) = splitHeadTail<Node<T>>(nodes);
 
             for (left : T in head.elements.vals()) {
-                let codeUpdateString = switch (Map.get<T, Text>(stringCode, hashEq, left)) {
-                    case null { "1" };
-                    case (?code) { "1" #code };
+                let codeUpdateString = switch (Map.get<T, Code>(codes, hashEq, left)) {
+                    case null { "0" };
+                    case (?code) { "0" #code };
                 };
-                ignore Map.put<T, Text>(stringCode, hashEq, left, codeUpdateString);
-                ignore Set.put<T>(setElements, hashEq, left);
+                ignore Map.put<T, Code>(codes, hashEq, left, codeUpdateString);
             };
             for (rigth : T in tail[0].elements.vals()) {
-                let currentStringCode = switch (Map.get<T, Text>(stringCode, hashEq, rigth)) {
-                    case null { "0" };
-                    case (?code) { "0" # code };
+                let currentCode = switch (Map.get<T, Code>(codes, hashEq, rigth)) {
+                    case null { "1" };
+                    case (?code) { "1" # code };
                 };
-                ignore Map.put<T, Text>(stringCode, hashEq, rigth, currentStringCode);
-                ignore Set.put<T>(setElements, hashEq, rigth);
+                ignore Map.put<T, Code>(codes, hashEq, rigth, currentCode);
             };
 
-            // let newNode = { elements = Set.toArray<T>(setElements); prob = sumProb};
-            // var i  = 1;
-            // while(i < tail.size()){
-            //     if( tail[i].prob < sumProb){
-            //         tail[i - 1] := tail[i];
-            //         i += 1;  
-            //     }
-            //     else {
-            //         tail[i - 1] := newNode;
-            //         i := tail.size();
-            //     };
-
-            // };
-            // nodes := tail;
-
-            tail[0] := {
-                elements = Set.toArray<T>(setElements);
-                prob = sumProb;
+            let newNode = mergeNodes<T>(head, tail[0]);
+            /////////////////////// NewNode Insertion ////////////////////////////////////
+            var i = 0;
+            var currentSize = tail.size();
+            while (i < currentSize) {
+                if (i == (currentSize - 1 : Nat)) {
+                    tail[i] := newNode;
+                    i += 1;
+                } else {
+                    if (tail[i + 1].prob < newNode.prob) {
+                        tail[i] := tail[i + 1];
+                        i += 1;
+                    } else {
+                        tail[i] := newNode;
+                        i := tail.size();
+                    };
+                };
             };
-            nodes := _quickSort<Node<T>>(tail, func(a, b) = if (a.prob < b.prob) { #less } else { #greater });
+            //////////////////////////////////////////////////////////////////////////////
+            nodes := tail;
         };
-        stringCode;
+        codes;
     };
 
-    func cmpProb(a : (Nat8, Nat), b : (Nat8, Nat)) : { #less; #equal; #greater } {
-        return if (a.1 < b.1) {
-            #less;
-        } else {
-            #greater;
-        };
-    };
-
-    public func getHuffmanCodes(string : Text) : [(Nat8, Text)] {
-        let frec = calculateFrequencies(string);
-        let sortedInput = _quickSort<(Nat8, Nat)>(frec, cmpProb);
-        let map = buildHuffmanTree<Nat8>(sortedInput, n8hash);
-        // for (c in Prim.blobToArray(Prim.encodeUtf8(string)).vals()){
-        //     print(switch(Map.get<Nat8, Text>(map, n8hash, c)){case null{""}; case(?c){c}});
-        // };
-        Map.toArray<Nat8, Text>(map);
+    public func getHuffmanCodes(string : Text) : Map.Map<Nat8, Code> {
+        let frec : [var Node<Nat8>] = calculateFrequencies(string);
+        let sortedInput = quickSort<Node<Nat8>>(frec, cmpNodes);
+        buildHuffmanTree<Nat8>(sortedInput, n8hash);
     };
 
 };
