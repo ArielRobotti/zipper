@@ -38,7 +38,7 @@ module {
         };
         result;
     };
-    
+
     func sliceArray<T>(arr : [var T], end : Nat) : [var T] {
         let result = Prim.Array_init<T>(end, arr[0]);
         var index = 0;
@@ -115,7 +115,7 @@ module {
 
     type Code = Text;
 
-    func buildHuffmanTree<T>(arr : [var Node<T>], hashEq : (T -> Nat32, (T, T) -> Bool)) : Map.Map<T, Code> {
+    func getHuffmanCodes<T>(arr : [var Node<T>], hashEq : (T -> Nat32, (T, T) -> Bool)) : Map.Map<T, Code> {
         let codes = Map.new<T, Code>();
         var nodes = arr;
         while (nodes.size() > 1) {
@@ -160,10 +160,10 @@ module {
         codes;
     };
 
-    public func getHuffmanCodes(string : Text) : Map.Map<Nat8, Code> {
+    public func getCodes(string : Text) : Map.Map<Nat8, Code> {
         let frec : [var Node<Nat8>] = calculateFrequencies(string);
         let sortedInput = quickSort<Node<Nat8>>(frec, cmpNodes);
-        buildHuffmanTree<Nat8>(sortedInput, n8hash);
+        getHuffmanCodes<Nat8>(sortedInput, n8hash);
     };
 
 };

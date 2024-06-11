@@ -4,7 +4,7 @@ import Map "mo:map/Map";
 actor {
 
 	public query func getCodes(input: Text): async [(Nat8, Text)]{
-		Map.toArray<Nat8, Text>(Zip.getHuffmanCodes(input));
+		Map.toArray<Nat8, Text>(Zip.getCodes(input));
 	}
 
 };
