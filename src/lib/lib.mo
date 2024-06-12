@@ -1,7 +1,7 @@
 import Prim "mo:⛔";
 import Map "mo:map/Map";
 import Nat "mo:base/Nat";
-import { n8hash } "mo:map/Map";
+import { n8hash; thash } "mo:map/Map";
 import Debug "mo:base/Debug";
 import Types "types";
 import { cmpNodes } "types";
@@ -115,7 +115,7 @@ module {
 
     type Code = Text;
 
-    func getHuffmanCodes<T>(arr : [var Node<T>], hashEq : (T -> Nat32, (T, T) -> Bool)) : Map.Map<T, Code> {
+    func getHuffmanCodes<T>(arr : [var Node<T>], hashEq : (T -> Nat32, (T, T) -> Bool)) : (Map.Map<T, Code>, Nat) {
         let codes = Map.new<T, Code>();
         var nodes = arr;
         while (nodes.size() > 1) {
@@ -154,16 +154,52 @@ module {
                     };
                 };
             };
-            //////////////////////////////////////////////////////////////////////////////
+            //////////////////////////////////////////////////////////////////////////////////////
             nodes := tail;
         };
-        codes;
+        ///////////////// Tamaño en bits de los datos al ser comprimidos  ////////////////////
+        var sizeResult = 0;
+        for (i in arr.vals()) {
+            let sizeChar = switch (Map.get<T, Code>(codes, hashEq, i.elements[0])) {
+                case (?code) { code.size() };
+                case null { assert false; 0 };
+            };
+            sizeResult += (i.prob * sizeChar);
+        };
+        //////////////////////////////////////////////////////////////////////////////////////
+        (codes, sizeResult);
+    };
+
+    func encodeText(input : Text, hashEq : (Nat8 -> Nat32, (Nat8, Nat8) -> Bool)) : Types.ZippedData {
+        let frec : [var Node<Nat8>] = calculateFrequencies(input);
+        let sortedInput = quickSort<Node<Nat8>>(frec, cmpNodes);
+
+        let (map, size) = getHuffmanCodes<Nat8>(sortedInput, n8hash);
+        let dataResult = Prim.Array_init<Nat8>(size / 8 +1, 0);
+        let nat8Array = Prim.blobToArray(Prim.encodeUtf8(input));
+        var nByte = 0;
+        for (char in nat8Array.vals()) {
+            let code = switch (Map.get<Nat8, Code>(map, hashEq, char)) {
+                case (?code) { code };
+                case null { assert false; "" };
+            };
+            //TODO A partir de cada code, cuyo formato es "00110101" por ejemplo, concatenarlos en el array de bytes sin dejar ningun bit sin usar
+        };
+        
+        let mapInvert = Map.new<Code, Nat8>();
+        for ((k, v) in Map.entries(map)) {
+            ignore Map.put<Code, Nat8>(mapInvert, thash, v, k);
+        };
+        let byteArray = Prim.Array_tabulate<Nat8>(size / 8 +1, func x = dataResult[x]);
+
+        {map = mapInvert; byteArray}
+
     };
 
     public func getCodes(string : Text) : Map.Map<Nat8, Code> {
         let frec : [var Node<Nat8>] = calculateFrequencies(string);
         let sortedInput = quickSort<Node<Nat8>>(frec, cmpNodes);
-        getHuffmanCodes<Nat8>(sortedInput, n8hash);
+        getHuffmanCodes<Nat8>(sortedInput, n8hash).0;
     };
 
 };
