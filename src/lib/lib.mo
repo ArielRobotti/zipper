@@ -4,7 +4,7 @@ import Nat "mo:base/Nat";
 import { n8hash; thash } "mo:map/Map";
 import Debug "mo:base/Debug";
 import Types "types";
-import { cmpNodes } "types";
+import { cmpNodes; hCodeHash} "types";
 // import Nat "mo:base/Nat";
 
 module {
@@ -194,7 +194,7 @@ module {
         (codes, codes2, sizeResult);
     };
 
-    func encode(input: Text, hashEq: (Nat8 -> Nat32, (Nat8, Nat8) -> Bool)): /* Types.ZippedData */ /* [Nat8] */ Nat{
+    func encode(input: Text, hashEq: (Nat8 -> Nat32, (Nat8, Nat8) -> Bool)): Types.ZippedData{
         let frec : [var Node<Nat8>] = calculateFrequencies(input);
         let sortedInput = quickSort<Node<Nat8>>(frec, cmpNodes);
 
@@ -208,7 +208,12 @@ module {
                 case null { assert false};
             }; 
         };
-        return resultNat;
+        let inversedMap = Map.new<Code2, Nat8>();
+        for ((k, v) in Map.entries(map)){
+            ignore Map.put<Code2, Nat8>(inversedMap, hCodeHash, v, k);
+        };
+        {map = inversedMap; payLoad = resultNat}
+        
         // var nByte = 0;
         // while (nByte < dataResult.size()){
         //     dataResult[nByte] := Prim.natToNat8(resultNat % 256);
@@ -225,40 +230,13 @@ module {
 
     };
 
-    // func encodeText(input : Text, hashEq : (Nat8 -> Nat32, (Nat8, Nat8) -> Bool)) : Types.ZippedData {
-    //     let frec : [var Node<Nat8>] = calculateFrequencies(input);
-    //     let sortedInput = quickSort<Node<Nat8>>(frec, cmpNodes);
-
-    //     let (map, size) = getHuffmanCodes<Nat8>(sortedInput, n8hash);
-    //     let dataResult = Prim.Array_init<Nat8>(size / 8 +1, 0);
-    //     let nat8Array = Prim.blobToArray(Prim.encodeUtf8(input));
-    //     var nByte = 0;
-    //     var currentBit = 0;
-    //     for (char in nat8Array.vals()) {
-    //         let code = switch (Map.get<Nat8, Code>(map, hashEq, char)) {
-    //             case (?code) { code };
-    //             case null { assert false; "" };
-    //         }; 
-    //         //TODO A partir de cada code, cuyo formato es "00110101" por ejemplo, concatenarlos en el array de bytes sin dejar ningun bit sin usar
-    //     };
-        
-    //     let mapInvert = Map.new<Code, Nat8>();
-    //     for ((k, v) in Map.entries(map)) {
-    //         ignore Map.put<Code, Nat8>(mapInvert, thash, v, k);
-    //     };
-    //     let byteArray = Prim.Array_tabulate<Nat8>(size / 8 +1, func x = dataResult[x]);
-
-    //     {map = mapInvert; byteArray}
-
-    // };
-
     public func getCodes(string : Text) : (Map.Map<Nat8, Code>, Map.Map<Nat8, Code2>) {
         let frec : [var Node<Nat8>] = calculateFrequencies(string);
         let sortedInput = quickSort<Node<Nat8>>(frec, cmpNodes);
         (getHuffmanCodes<Nat8>(sortedInput, n8hash).0, getHuffmanCodes<Nat8>(sortedInput, n8hash).1);
         
     };
-    public func encodeText(string: Text): async/*  [Nat8] */ Nat{
+    public func encodeText(string: Text): Types.ZippedData{
         encode(string, n8hash);
     };
   

@@ -13,7 +13,7 @@ actor {
 		a.size();
 	};
 
-	public func encode(string : Text) : async /* [Nat8] */ Nat{
-		await Zip.encodeText(string);
+	public func encode(string : Text) : async Nat{
+		Zip.encodeText(string).payLoad;
 	};
 };
