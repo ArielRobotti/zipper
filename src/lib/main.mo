@@ -1,12 +1,12 @@
 import Zip "lib";
 import Map "mo:map/Map";
+import Types "types";
 
 actor {
-	public query func getCodes(input : Text) : async ([(Nat8, Text)], [(Nat8, { bits : Nat; value : Nat })]) {
+	public query func getCodes(input : Text) : async [(Nat8, { len : Nat; value : Nat })] {
 		let zip = Zip.getCodes(input);
-		let a = Map.toArray<Nat8, { bits : Nat; value : Nat }>(zip.1);
-		let b = Map.toArray<Nat8, Text>(zip.0);
-		(b, a);
+		let a = Map.toArray<Nat8, { len : Nat; value : Nat }>(zip.1);
+		 a;
 	};
 
 	public func getSize(a : Text) : async Nat {
@@ -14,6 +14,12 @@ actor {
 	};
 
 	public func encode(string : Text) : async Nat{
-		Zip.encodeText(string).payLoad;
+		Zip.encodeText(string).len;
 	};
+
+	public query func encodeDecode(a: Text): async [Nat8] {
+		let encoded = Zip.encodeText(a);
+		let decoded = Zip.decode(encoded);
+
+	}
 };
