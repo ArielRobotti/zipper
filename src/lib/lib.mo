@@ -7,11 +7,11 @@ import { print } "mo:base/Debug";
 import Buffer "mo:base/Buffer";
 import Types "types";
 import { cmpNodes; hCodeHash } "types";
-// import Nat "mo:base/Nat";
 
 module {
     type Node<T> = Types.Node<T>;
     type Order = Types.Order;
+    type HCode = Types.HCode;
 
     //Runtime: O(n)
     func calculateFrequencies(input : Blob) : [var Node<Nat8>] {
@@ -114,50 +114,34 @@ module {
         { elements; prob };
     };
 
-    type Code = Text;
-    type HCode = Types.HCode;
+    func getHuffmanCodes<T>(arr : [var Node<T>], hashEq : (T -> Nat32, (T, T) -> Bool)) : (Map.Map<T, HCode>, Nat) {
 
-    func getHuffmanCodes<T>(arr : [var Node<T>], hashEq : (T -> Nat32, (T, T) -> Bool)) : (Map.Map<T, Code>, Map.Map<T, HCode>, Nat) {
-        let codes = Map.new<T, Code>();
-        let codes2 = Map.new<T, HCode>();
+        let codes = Map.new<T, HCode>();
         var nodes = arr;
         while (nodes.size() > 1) {
             let (head, tail) = splitHeadTail<Node<T>>(nodes);
 
             for (left : T in head.elements.vals()) {
-                let codeUpdateString = switch (Map.get<T, Code>(codes, hashEq, left)) {
-                    case null { "0" };
-                    case (?code) { "0" #code };
-                };
-                ignore Map.put<T, Code>(codes, hashEq, left, codeUpdateString);
-                //////////////////////////////////////////////////////////////////////////////////
-                let code2Update : HCode = switch (Map.get<T, HCode>(codes2, hashEq, left)) {
+                let code2Update : HCode = switch (Map.get<T, HCode>(codes, hashEq, left)) {
                     case null { { len = 1; value = 0 } };
-                    case (?code2) {
-                        { len = code2.len + 1; value = code2.value };
+                    case (?code) {
+                        { len = code.len + 1; value = code.value };
                     };
                 };
-                ignore Map.put<T, HCode>(codes2, hashEq, left, code2Update);
-                //////////////////////////////////////////////////////////////////////////////////
+                ignore Map.put<T, HCode>(codes, hashEq, left, code2Update);
             };
             for (rigth : T in tail[0].elements.vals()) {
-                let currentCode = switch (Map.get<T, Code>(codes, hashEq, rigth)) {
-                    case null { "1" };
-                    case (?code) { "1" # code };
-                };
-                ignore Map.put<T, Code>(codes, hashEq, rigth, currentCode);
-                //////////////////////////////////////////////////////////////////////////////////
-                let code2Update : HCode = switch (Map.get<T, HCode>(codes2, hashEq, rigth)) {
+
+                let code2Update : HCode = switch (Map.get<T, HCode>(codes, hashEq, rigth)) {
                     case null { { len = 1; value = 1 } };
-                    case (?code2) {
+                    case (?code) {
                         {
-                            len = code2.len + 1;
-                            value = 2 ** code2.len + code2.value;
+                            len = code.len + 1;
+                            value = 2 ** code.len + code.value;
                         };
                     };
                 };
-                ignore Map.put<T, HCode>(codes2, hashEq, rigth, code2Update);
-                //////////////////////////////////////////////////////////////////////////////////
+                ignore Map.put<T, HCode>(codes, hashEq, rigth, code2Update);
             };
             let newNode = mergeNodes<T>(head, tail[0]);
             /////////////////////// NewNode Insertion ////////////////////////////////////
@@ -183,21 +167,21 @@ module {
         ///////////////// Tamaño en bits de los datos al ser comprimidos  ////////////////////
         var sizeResult = 0;
         for (i in arr.vals()) {
-            let sizeChar = switch (Map.get<T, Code>(codes, hashEq, i.elements[0])) {
-                case (?code) { code.size() };
+            let sizeChar = switch (Map.get<T, HCode>(codes, hashEq, i.elements[0])) {
+                case (?code) { code.len };
                 case null { assert false; 0 };
             };
             sizeResult += (i.prob * sizeChar);
         };
         //////////////////////////////////////////////////////////////////////////////////////
-        (codes, codes2, sizeResult);
+        (codes, sizeResult);
     };
 
-    func encode(input : Blob) : Types.ZippedData {
+    func zip(input : Blob) : Types.ZippedData {
         let frec : [var Node<Nat8>] = calculateFrequencies(input);
         let sortedInput = quickSort<Node<Nat8>>(frec, cmpNodes);
 
-        let (caca, map, size) = getHuffmanCodes<Nat8>(sortedInput, n8hash);
+        let (map, size) = getHuffmanCodes<Nat8>(sortedInput, n8hash);
         let dataResult = Prim.Array_init<Nat8>(size / 8 +1, 0);
         let nat8Array = Prim.blobToArray(input);
         var resultNat : Nat = 0;
@@ -217,74 +201,51 @@ module {
         };
         { map = inversedMap; len = bits; payLoad = resultNat }
 
-        // var nByte = 0;
-        // while (nByte < dataResult.size()){
-        //     dataResult[nByte] := Prim.natToNat8(resultNat % 256);
-        //     resultNat /= 256;
-        //     nByte += 1;
-        // };
-        // // let mapInvert = Map.new<Code, Nat8>();
-        // // for ((k, v) in Map.entries(map)) {
-        // //     ignore Map.put<HCode, Nat8>(mapInvert, thash, v, k);
-        // // };
-        // let byteArray = Prim.Array_tabulate<Nat8>(size / 8 +1, func x = dataResult[x]);
-
-        // byteArray
     };
-
-    public func decode(input : Types.ZippedData) : [Nat8] {
-        let map = input.map;
+    //////////////////// exceeded the instruction limit for single message execution  /////////////////
+    public func unZip(input : Types.ZippedData) : [Nat8] {
         var bits = input.len;
         var data = input.payLoad;
 
         var minLenCode : Nat = 32;
         var maxLenCode : Nat = 0;
         let bufferResult = Buffer.fromArray<Nat8>([]);
-        for (l in Map.keys<HCode, Nat8>(map)) {
+        for (l in Map.keys<HCode, Nat8>(input.map)) {
             if (l.len < minLenCode) { minLenCode := l.len };
             if (l.len > maxLenCode) { maxLenCode := l.len };
         };
-        print("minLenCode: " # Nat.toText(minLenCode));
-        print("maxLenCode: " # Nat.toText(maxLenCode));
         var sizeCurrentCode = minLenCode;
         while (sizeCurrentCode <= maxLenCode and bits > 0) {
             let candidate = {
                 len = sizeCurrentCode;
-                value: Nat = data / 2 ** (bits - sizeCurrentCode); 
+                value : Nat = data / 2 ** (bits - sizeCurrentCode);
             };
-
-            //////////////////////////// Arreglar esto ///////////////////////////////
-            switch (Map.get<HCode, Nat8>(map, hCodeHash, candidate)) {
+            switch (Map.get<HCode, Nat8>(input.map, hCodeHash, candidate)) {
                 case null {
                     sizeCurrentCode += 1;
-                    };
-                case (?code){
-                    print("--------------------------");
-                    print("Char: " # Nat8.toText(code) # " -----> Code: " # Nat.toText(candidate.value) );
+                };
+                case (?code) {
                     bufferResult.add(code);
-                    print("bits: " # Nat.toText(bits));
-                    print("sizeCurrentCode: " # Nat.toText(sizeCurrentCode));
                     bits -= sizeCurrentCode;
-                    data %= 2 ** (bits - sizeCurrentCode -1);
-                    sizeCurrentCode := minLenCode
+                    data %= 2 ** bits;
+                    sizeCurrentCode := minLenCode;
                 };
             };
-            //////////////////////////////////////////////////////////////////////////
-
         };
+
         Buffer.toArray<Nat8>(bufferResult);
     };
-
-    public func getCodes(string : Text) : (Map.Map<Nat8, Code>, Map.Map<Nat8, HCode>) {
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+    public func getCodes(string : Text) : (Map.Map<Nat8, HCode>) {
         let frec : [var Node<Nat8>] = calculateFrequencies(Prim.encodeUtf8(string));
         let sortedInput = quickSort<Node<Nat8>>(frec, cmpNodes);
-        (getHuffmanCodes<Nat8>(sortedInput, n8hash).0, getHuffmanCodes<Nat8>(sortedInput, n8hash).1);
+        (getHuffmanCodes<Nat8>(sortedInput, n8hash).0);
 
     };
     public func encodeText(string : Text) : Types.ZippedData {
         let nat8Array = Prim.encodeUtf8(string);
 
-        encode(nat8Array);
+        zip(nat8Array);
     };
 
 };
